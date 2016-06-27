@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% import '_forms.html' as forms %}
+
+{% block page_header %}
+{% endblock %}
+
+{% block content %}
+
+    <article class="article">
+      <header>
+      {% if post.image_url %}
+      <figure>
+        <p><img src="{{ post.image_url }}" /><p>
+      </figure>
+      {% endif %}
+
+      <div class="meta-data">
+            <h3><a href="{{ url_for('posts.detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+            
+            <p class="author">
+            <time datetime="2015-08-07">{{ post.created_at.strftime('%B %d, %Y') }}</time>
+            </p>
+      </div>
+      </header>
+
+      <div class="entry-content" id="info">
+
+      {% if post.body %}
+        {% if post.post_type == 'Quote' %}
+          <blockquote>{{ post.body }}</blockquote>
+          <p>{{ post.author }}</p>
+        {% else %}
+          <p>{{ post.body | safe() }}</p>
+        {% endif %}
+      {% endif %}
+      {% if post.embed_code %}
+        <div align="center">
+          {{ post.embed_code|safe() }}
+        </div>
+      {% endif %}
+      <br><br>
+    </div>
+      
+      <hr>
+  		<h2>Comments</h2>
+  			{% if post.comments %}
+    			{% for comment in post.comments %}
+       				<p>{{ comment.body }}</p>
+       				<p>    &nbsp;    &nbsp;<strong>{{ comment.author }}</strong> <small>on {{ comment.created_at.strftime('%B %d, %Y') }}</small></p>
+      				{{ comment.text }}
+    			{% endfor %}
+  			{% endif %}
+  	<hr>
+
+  	<h2>Add a comment</h2>
+    <form action="." method="post">
+    {{ forms.render(form) }}
+    <br>
+    <div class="actions">
+      <input type="submit" class="button-primary" value="comment">
+    </div>
+	</form>
+  	<hr>
+
+    </article>
+{% endblock %}

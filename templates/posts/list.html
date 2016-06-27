@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block page_header%}
+<!-- Main Nav -->
+    <section class="container">
+      <nav class="nav">
+        
+           
+        <ul>
+          <li><a href="index.html">Blog</a></li>
+          <li><a href="about.html">About</a></li>
+
+        </ul>
+        
+          
+      </nav>
+    </section>
+{% endblock %}
+
+{% block content %}
+    {% for post in posts %}
+    <article class="article">
+      <header>
+      {% if post.image_url %}
+      <figure>
+        <p><img src="{{ post.image_url }}" /><p>
+      </figure>
+      {% endif %}
+
+      <div class="meta-data">
+            <h3><a href="{{ url_for('posts.detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+            
+            <p class="author">
+            <time datetime="2015-08-07">{{ post.created_at.strftime('%B %d, %Y') }}</time>
+            </p>
+      </div>
+      </header>
+
+      <div class="entry-content" id="info">
+
+      {% if post.body %}
+        {% if post.post_type == 'Quote' %}
+          <blockquote>{{ post.body|truncate(200) }}</blockquote>
+          <p>{{ post.author }}</p>
+        {% else %}
+          <p>{{ post.body|truncate(1000)|safe()}}</p>
+            {% if post.body | length > 1000 %}
+            <a class="button-text" href="{{url_for('posts.detail', slug = post.slug)}}">Read More <span> &olarr;</span></a>
+            {% endif%}
+        {% endif %}
+      {% endif %}
+      {% if post.embed_code %}
+      <div style="align:center;">
+        {{ post.embed_code|safe() }}
+      </div>
+      {% endif %}
+    </div>
+      
+    <footer>
+      <p>
+        {% with total=post.comments|length %}
+            {{ total }} comment {%- if total > 1 %}s{%- endif -%}
+        {% endwith %}
+      </p>
+    </footer>
+    </article>
+    {% endfor %}
+{% endblock %}
